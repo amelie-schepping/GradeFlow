@@ -75,6 +75,59 @@ app.put("/Student/:id", (req, res) => {
   });
 });
 
+app.get("/Student/:id", (req, res) => {
+  const studentId = req.params.id;
+  const q = "SELECT * FROM Student WHERE id = ?";
+
+  db.query(q, [studentId], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Abrufen des Studenten:", err);
+      return res.status(500).json(err);
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ message: "Student nicht gefunden" });
+    }
+    return res.json(data[0]);
+  });
+});
+app.get("/Class", (req, res) => {
+  const q = "SELECT * FROM Class";
+  db.query(q, (err, data) => {
+    if (err) {
+      console.error("Fehler beim Laden der Klassen:", err);
+      return res.status(500).json(err);
+    }
+    return res.json(data);
+  });
+});
+
+app.get("/Student/class/:classId", (req, res) => {
+  const classId = req.params.classId;
+  const q = "SELECT * FROM Student WHERE class_id = ?";
+
+  db.query(q, [classId], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Abrufen der Schüler:", err);
+      return res.status(500).json(err);
+    }
+    return res.json(data);
+  });
+});
+app.post("/Class", (req, res) => {
+  const { name } = req.body;
+  const q = "INSERT INTO Class (name) VALUES (?)";
+
+  db.query(q, [name], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Einfügen der Klasse:", err);
+      return res.status(500).json(err);
+    }
+    return res
+      .status(201)
+      .json({ message: "Klasse hinzugefügt", id: data.insertId });
+  });
+});
+
 app.listen(8800, () => {
   console.log("Server is running on port 8800!");
 });
