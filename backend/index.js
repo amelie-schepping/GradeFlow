@@ -28,12 +28,14 @@ app.get("/Student", (req, res) => {
     return res.json(data);
   });
 });
+
 app.post("/Student", (req, res) => {
-  const { firstName, lastName, class: classId } = req.body;
+  const { firstName, lastName, class_id } = req.body;
+  console.log("Empfangenes body:", req.body);
 
   const q =
     "INSERT INTO Student (firstName, lastName, class_id) VALUES (?, ?, ?)";
-  const values = [firstName, lastName, classId];
+  const values = [firstName, lastName, class_id];
 
   db.query(q, values, (err, data) => {
     if (err) {
@@ -125,6 +127,21 @@ app.post("/Class", (req, res) => {
     return res
       .status(201)
       .json({ message: "Klasse hinzugefügt", id: data.insertId });
+  });
+});
+
+app.get("/Class/:id", (req, res) => {
+  const classId = req.params.id;
+  const q = "SELECT * FROM Class WHERE id = ?";
+  db.query(q, [classId], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Abrufen der Klasse:", err);
+      return res.status(500).json(err);
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ message: "Klasse nicht gefunden" });
+    }
+    return res.json(data[0]);
   });
 });
 
