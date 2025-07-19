@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <Layout>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-        Dashboard
+        Klassen Übersicht
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
         {classes.map((klasse) => (
