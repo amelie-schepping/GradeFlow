@@ -1,0 +1,80 @@
+import express from "express";
+import mySql from "mysql2";
+import cors from "cors";
+
+import dotenv from "dotenv";
+dotenv.config();
+
+const app = express();
+
+const db = mySql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: process.env.DB_PASSWORD,
+  database: "GradeFlow",
+});
+
+app.use(express.json());
+app.use(cors());
+
+app.get("/", (req, res) => {
+  res.json("Hello from backend!");
+});
+
+app.get("/Student", (req, res) => {
+  const q = "SELECT * FROM Student";
+  db.query(q, (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+app.post("/Student", (req, res) => {
+  const { firstName, lastName, class: classId } = req.body;
+
+  const q =
+    "INSERT INTO Student (firstName, lastName, class_id) VALUES (?, ?, ?)";
+  const values = [firstName, lastName, classId];
+
+  db.query(q, values, (err, data) => {
+    if (err) {
+      console.error("Fehler beim Einfügen:", err);
+      return res.status(500).json(err);
+    }
+    return res
+      .status(201)
+      .json({ message: "Student hinzugefügt", id: data.insertId });
+  });
+});
+
+app.delete("/Student/:id", (req, res) => {
+  const studentId = req.params.id;
+  const q = "DELETE FROM Student WHERE id = ?";
+
+  db.query(q, [studentId], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Löschen:", err);
+      return res.status(500).json(err);
+    }
+    return res.json({ message: "Student gelöscht" });
+  });
+});
+
+app.put("/Student/:id", (req, res) => {
+  const studentId = req.params.id;
+  const q =
+    "UPDATE Student SET `firstName` = ?, `lastName` = ?, `class_id` = ? WHERE id = ?";
+
+  const values = [req.body.firstName, req.body.lastName, req.body.class_id];
+
+  db.query(q, [...values, studentId], (err, data) => {
+    if (err) {
+      console.error("Fehler beim Update:", err);
+      return res.status(500).json(err);
+    }
+    return res.json({ message: "Student geupdated" });
+  });
+});
+
+app.listen(8800, () => {
+  console.log("Server is running on port 8800!");
+});

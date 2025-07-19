@@ -1,0 +1,30 @@
+# ----------------------------------------
+# General
+# ----------------------------------------
+
+node_modules/
+.DS_Store
+.env
+.env.*
+*.log
+
+# ----------------------------------------
+# Frontend (create-react-app)
+# ----------------------------------------
+
+/client/build
+/client/.pnp
+/client.pnp.js
+/client/coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ----------------------------------------
+# Backend
+# ----------------------------------------
+
+/backend/node_modules
+/backend/.env
+/backend/coverage
+/backend/dist
